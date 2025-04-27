@@ -1,4 +1,6 @@
 # Black-Scholes-Model
+![Screenshot From 2025-04-27 12-48-55](https://github.com/user-attachments/assets/9c020d1d-db49-4313-ad25-a907d2720bff)
+
 ## About:
 
 ### Basic Black Scholes Algorithm
@@ -29,3 +31,13 @@ Newton Raphson (Implied Volatility):
 - Read options list from a csv file and ouput the call and put option price using the black scholes algorithm
 - Implement implied volatility where we reverse the black sholes algo given a market option price find out what the implied volatility value is
 - Visualise Option Prices using matplotlib such as option price vs stock price, option price vs strike price, option price vs volatility, option price vs time to maturity
+
+![image](https://github.com/user-attachments/assets/b7669cb1-c615-4eaa-aab8-4618b4b9e26f)
+![image](https://github.com/user-attachments/assets/fa744f71-dcf3-454c-81c4-1b3919e30ee7)
+![image](https://github.com/user-attachments/assets/6be9c358-7d8d-4f5f-a178-af7fea0c255a)
+![image](https://github.com/user-attachments/assets/41a3796f-2988-4ace-98aa-dc7ec40dd881)
+![image](https://github.com/user-attachments/assets/11723d0b-f0b7-4616-8845-f9280bced1bb)
+![image](https://github.com/user-attachments/assets/61f4695c-b5f6-42f9-b0f1-170a7601052c)
+![image](https://github.com/user-attachments/assets/205cc716-8075-4dea-b2eb-f78b0ca89d7b)
+![image](https://github.com/user-attachments/assets/b6154a1c-1be1-4d70-a5ea-67f81e2bc76c)
+
