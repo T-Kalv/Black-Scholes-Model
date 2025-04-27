@@ -14,13 +14,13 @@
 C = S*N(d1) - (Ke^(-rT)) * N(d2) which is the European Call Option
 P = (Ke^(-rT)) * N(-d2) - S*N(-d1) which is the European Put Option
 
-d1 = (ln(S/K) + (r+(σ^2)/2)T)/(σ*sqrt(T))
-d2 = d1 - σ*sqrt(T)
-N(d) = cumulative distribution function of the standard normal distribution which gives the probability that a normally distributed random varaible is < d
+- d1 = (ln(S/K) + (r+(σ^2)/2)T)/(σ*sqrt(T))
+- d2 = d1 - σ*sqrt(T)
+- N(d) = cumulative distribution function of the standard normal distribution which gives the probability that a normally distributed random varaible is < d
 
 Newton Raphson (Implied Volatility):
-f(σ) = BlackScholes(σ) - MarketPrice = 0
-σnew = σ - (f(σ)/f'(σ)) = σ - (BlackScholes(σ) - MarketPrice/Vega(σ))
+- f(σ) = BlackScholes(σ) - MarketPrice = 0
+- σnew = σ - (f(σ)/f'(σ)) = σ - (BlackScholes(σ) - MarketPrice/Vega(σ))
 - Vega(σ) = rate of change of BlackScholes option price wrt chaanges in volatility σ
 
 
