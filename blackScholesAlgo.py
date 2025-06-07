@@ -34,6 +34,7 @@ Tasks:
 - Read options list from a csv file and ouput the call and put option price using the black scholes algorithm
 - Implement implied volatility where we reverse the black sholes algo given a market option price find out what the implied volatility value is
 - Visualise Option Prices using matplotlib such as option price vs stock price, option price vs strike price, option price vs volatility, option price vs time to maturity
+- Implement simple Steamlit app that shows these results
 """
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -41,7 +42,9 @@ Tasks:
 import math
 from scipy.stats import norm
 import csv
+import streamlit as st
 import matplotlib.pyplot as plt
+
 plt.style.use('dark_background')
 
 def europeanCallOption(S, K, T, r, σ):
@@ -211,7 +214,64 @@ def Main():
     visualiseOptionVolatility(float(S), float(K), float(T), float(r), float(σ), "put")
 
 
+def optionCurveGraph(x, y, xlabel, ylabel, title):
+    fig, ax = plt.subplots()
+    ax.plot(x, y, color="white")
+    ax.set_title(title)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.grid(True)
+    st.pyplot(fig)
+
+def StreamlitInterface():
+    st.title("Black-Scholes Model")
+    st.caption("Black-Scholes Algorithm Visualiser")
+    S = st.number_input("Enter Current Stock Price(S): ", value=0.0)
+    K = st.number_input("Enter Strike Price(K): ", value=0.0)
+    T = st.number_input("Enter Time To Maturity In Year(T): ", value=0.0)
+    r = st.number_input("Enter Risk-Free Interest Rate(r): ", value=0.0)
+    σ  = st.number_input("Enter Volatility(σ): ", value=0.0)
+
+    if st.button("Calculate Call & Put Option Values"):
+        callValue = europeanCallOption(S, K, T, r, σ)
+        putValue = europeanCallOption(S, K, T, r, σ)        
+        st.success(f"Call Option Price: {callValue}")
+        st.success(f"Put Option Price: {putValue}")  # fixed typo and argument
+        stockPrices = list(range(50, 151))
+        strikePrices = list(range(50, 151))
+        maturitys = [i / 10 for i in range(1, 50)]
+        volatiles = [i / 10 for i in range(1, 50)]
+
+        st.subheader("Graphicall Visualisations")
+        if st.checkbox("Option Price vs Stock Price"):
+            y = [europeanCallOption(s, K, T, r, σ) for s in stockPrices]
+            optionCurveGraph(stockPrices, y, "Stock Price", "Call Option Price", "Call Option Price vs Stock Price")
+
+        if st.checkbox("Option Price vs Strike Price"):
+            y = [europeanCallOption(S, k, T, r, σ) for k in strikePrices]
+            optionCurveGraph(strikePrices, y, "Strike Price", "Call Option Price", "Call Option Price vs Strike Price")
+
+        if st.checkbox("Option Price vs Time to Maturity"):
+            y = [europeanCallOption(S, K, t, r, σ) for t in maturitys]
+            optionCurveGraph(maturitys, y, "Time to Maturity", "Call Option Price", "Call Option Price vs Maturity")
+
+        if st.checkbox("Option Price vs Volatility"):
+            y = [europeanCallOption(S, K, T, r, v) for v in volatiles]
+            optionCurveGraph(volatiles, y, "Volatility", "Call Option Price", "Call Option Price vs Volatility")
+
+    st.subheader("Implied Volatility Estimation")
+    optionType = st.selectbox("Option Type", ["call", "put"])
+    marketPrice = st.number_input("Market Price of the Option", value=0.0)
+
+    if st.button("Estimate Implied Volatility"):
+        impliedVolatility = impliedVolatility(optionType, marketPrice, S, K, T, r)
+        if impliedVolatility:
+            st.success("Estimated Implied Volatility: ", impliedVolatility)
+        else:
+            st.error("No convergence On Implied Volatility!")
+
 if __name__ == "__main__":
-    Main()
+    #Main()
     #optionListData("optionsList.csv")
     #Main2()
+    StreamlitInterface()
