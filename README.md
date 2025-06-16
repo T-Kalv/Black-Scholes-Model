@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/83df4059-bbac-4eb3-a378-b15b62f358d0)
+![image](https://github.com/user-attachments/assets/02a73b38-ed93-4751-b040-0661df733dd7)
 
 <!---
 ![Screenshot From 2025-04-27 12-48-55](https://github.com/user-attachments/assets/9c020d1d-db49-4313-ad25-a907d2720bff)
@@ -34,6 +34,7 @@ Newton Raphson (Implied Volatility):
 - Implement implied volatility where we reverse the black sholes algo given a market option price find out what the implied volatility value is
 - Visualise Option Prices using matplotlib such as option price vs stock price, option price vs strike price, option price vs volatility, option price vs time to maturity
 - Implement simple Steamlit app that shows these results
+- Add real time market data integration using Yahoo Finance API to retrieve real-world stock data 
 ![image](https://github.com/user-attachments/assets/73aded7a-ba87-4cd7-8edc-9c3499a6425a)
 ![image](https://github.com/user-attachments/assets/ce9aab0f-b049-4449-9b6b-4f9d692dca9d)
 ![image](https://github.com/user-attachments/assets/444c0a2f-5a10-4e62-aaed-e04f3512d56e)
