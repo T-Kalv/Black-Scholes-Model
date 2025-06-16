@@ -47,6 +47,7 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import yfinance as yf
 import numpy as np
+import plotly.graph_objs as go
 
 st.set_page_config(
     page_title="Black-Scholes Option Pricing Model Algorithm",
@@ -225,7 +226,7 @@ def StreamlitInterface():
         st.session_state['currentS'] = 100.0
     if 'currentSigma' not in st.session_state:
         st.session_state['currentSigma'] = 0.2
-    if st.button("Load Stock Market Data", key='loadData'):
+    if st.button("Load Current Stock Market Data", key='loadData'):
         if stockTicker:
             try:
                 stockData = yf.Ticker(stockTicker)
@@ -236,17 +237,17 @@ def StreamlitInterface():
                     st.success(f"Current Market Price: {st.session_state['currentS']:.2f}")
                     st.success(f"Previous Volatility Estimation: {st.session_state['currentSigma']:.4f}")
                 else:
-                    st.error("No Market Data Found.")
+                    st.error("No Market Data Found!")
             except Exception as e:
                 st.error(f"Error Loading Data: {e}")
         else:
             st.error("Please enter a Stock Ticker first.")
     
-    S = st.number_input("Enter Current Stock Price (S)", min_value=0.01, value=st.session_state['currentS'], key='currentS')
-    σ = st.number_input("Enter Volatility (σ)", min_value=0.001, value=st.session_state['currentSigma'], key='currentSigma')
-    K = st.number_input("Enter Strike Price (K)", min_value=0.01, value=S, key='currentK')
-    T = st.number_input("Enter Time To Maturity (yrs)", min_value=0.001, value=0.5, key='currentT')
-    r = st.number_input("Enter Risk-free Rate (r)", min_value=0.0, value=0.01, format="%.4f", key='currentR')
+    S = st.number_input("Enter Current Stock Price (S): ", min_value=0.01, value=st.session_state['currentS'], key='currentS')
+    σ = st.number_input("Enter Volatility (σ): ", min_value=0.001, value=st.session_state['currentSigma'], key='currentSigma')
+    K = st.number_input("Enter Strike Price (K): ", min_value=0.01, value=S, key='currentK')
+    T = st.number_input("Enter Time To Maturity (yrs): ", min_value=0.001, value=0.5, key='currentT')
+    r = st.number_input("Enter Risk-free Interest-Rate (r): ", min_value=0.0, value=0.01, format="%.4f", key='currentR')
 
     callPrice = europeanCallOption(S, K, T, r, σ)
     putPrice = europeanPutOption(S, K, T, r, σ)
@@ -263,6 +264,16 @@ def StreamlitInterface():
         visualiseOptionStrike(S, K, T, r, σ, optionType)
         visualiseOptionMaturity(S, K, r, σ, optionType)
         visualiseOptionVolatility(S, K, T, r, σ, optionType)
+
+    if st.button("Visualise Heatmap"):
+        sValues = np.linspace(S*0.5,S*1.5,50)
+        sigmaValues = np.linspace(0.05, 0.5, 50)
+        sGrid, sigmaGrid = np.meshgrid(sValues, sigmaValues)
+        stockPrices = np.vectorize(europeanCallOption)(sGrid, K, T, r, sigmaGrid)
+        fig = go.Figure(data=go.Heatmap(z=stockPrices,x=sValues,y=sigmaValues,colorbar=dict(title='Option Price'),colorscale='Viridis', text=np.round(stockPrices,2), texttemplate='%{text}', hovertemplate='Stock: %{x}<br>Volatility: %{y}<br>Price: %{z}<extra></extra>',showscale=True))
+        fig.update_layout(
+        title=f'Stock Option Prices Heatmap (centered at Current Stock ${S})', xaxis_title='Stock price (S)', yaxis_title='Volatility (σ)')
+        st.plotly_chart(fig)
 
     st.subheader("Implied Volatility Estimation")
     optionType = st.selectbox("Option Type", ["call", "put"], key="optionTypeImpliedVolatility")
