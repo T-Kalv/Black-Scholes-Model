@@ -54,7 +54,7 @@ st.set_page_config(
     page_icon="📈",
     initial_sidebar_state="expanded"
 )
-st.title("Black-Scholes Option Pricing Model Algorithm")
+st.title("Black-Scholes Option Pricing Model Algorithm 📈")
 st.caption("*Using Yahoo Finance Stock Market Data API")
 
 def europeanCallOption(S, K, T, r, σ):
@@ -265,12 +265,13 @@ def StreamlitInterface():
         visualiseOptionMaturity(S, K, r, σ, optionType)
         visualiseOptionVolatility(S, K, T, r, σ, optionType)
 
+    st.subheader("Stock Option Prices Heatmap")
     if st.button("Visualise Heatmap"):
         sValues = np.linspace(S*0.5,S*1.5,50)
         sigmaValues = np.linspace(0.05, 0.5, 50)
         sGrid, sigmaGrid = np.meshgrid(sValues, sigmaValues)
         stockPrices = np.vectorize(europeanCallOption)(sGrid, K, T, r, sigmaGrid)
-        fig = go.Figure(data=go.Heatmap(z=stockPrices,x=sValues,y=sigmaValues,colorbar=dict(title='Option Price'),colorscale='Viridis', text=np.round(stockPrices,2), texttemplate='%{text}', hovertemplate='Stock: %{x}<br>Volatility: %{y}<br>Price: %{z}<extra></extra>',showscale=True))
+        fig = go.Figure(data=go.Heatmap(z=stockPrices,x=sValues,y=sigmaValues,colorbar=dict(title='Option Price'),colorscale='RdYlGn', text=np.round(stockPrices,2), texttemplate='%{text}', hovertemplate='Stock: %{x}<br>Volatility: %{y}<br>Price: %{z}<extra></extra>',showscale=True))
         fig.update_layout(
         title=f'Stock Option Prices Heatmap (centered at Current Stock ${S})', xaxis_title='Stock price (S)', yaxis_title='Volatility (σ)')
         st.plotly_chart(fig)
