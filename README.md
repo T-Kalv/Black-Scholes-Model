@@ -1,3 +1,12 @@
+# Black-Scholes Option Pricing Model
+![GitHub top language](https://img.shields.io/github/languages/top/T-KALV/Black-Scholes-Model?style=plastic)
+![GitHub repo size](https://img.shields.io/github/repo-size/T-KALV/Black-Scholes-Model?style=plastic)
+![GitHub last commit](https://img.shields.io/github/last-commit/T-KALV/Black-Scholes-Model?style=plastic)
+![GitHub commits since latest release (by date including pre-releases)](https://img.shields.io/github/commits-since/T-KALV/Black-Scholes-Model/latest?include_prereleases&style=plastic)
+![GitHub issues](https://img.shields.io/github/issues/T-KALV/Black-Scholes-Model?style=plastic)
+![GitHub all releases](https://img.shields.io/github/downloads/T-KALV/Black-Scholes-Model/total?style=plastic)
+
+
 ![image](https://github.com/user-attachments/assets/cf4c797e-c477-4ee9-a5a9-4346052da3eb)
 ![image](https://github.com/user-attachments/assets/763318df-982b-4887-9c19-6d76895ddd22)
 
