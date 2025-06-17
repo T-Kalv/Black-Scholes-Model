@@ -28,6 +28,18 @@ f(σ) = BlackScholes(σ) - MarketPrice = 0
 σnew = σ - (f(σ)/f'(σ)) = σ - (BlackScholes(σ) - MarketPrice/Vega(σ))
 - Vega(σ) = rate of change of BlackScholes option price wrt chaanges in volatility σ
 
+Option Greeks:
+- Delta(Δ) = measures price sensitiviy to underlying, call option => Δ ranges from 0 to 1, put option => Δ ranges from -1 to 0
+- Gamma(Γ) = measure rate of change of delta
+- Vega(ν) = measures sensitivity to volatilty
+- Theta(Θ) = measures sensitivity to time decay
+- Rho(ρ) = measures sensitivity to interest rates
+
+Formala for Option Greeks:
+- Δ = N(d1) for calls, Δ = N(d1)-1 for puts, where N() is the standard normal cumulative distribution function
+- Γ = (N'(d1))/(Sσ srt(T)) where N'(d1) is the standard normal probability density function
+- ν = S srt(T) N'(d1)
+
 
 Tasks:
 - Implement basic Black Scholes Algotithm
@@ -36,6 +48,7 @@ Tasks:
 - Visualise Option Prices using matplotlib such as option price vs stock price, option price vs strike price, option price vs volatility, option price vs time to maturity
 - Implement simple Steamlit app that shows these results
 - Add real time market data integration using Yahoo Finance to retrieve real-world stock data 
+- Add stock option prices heatmap visualisation
 """
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -48,6 +61,7 @@ import matplotlib.pyplot as plt
 import yfinance as yf
 import numpy as np
 import plotly.graph_objs as go
+import pandas as pd
 
 st.set_page_config(
     page_title="Black-Scholes Option Pricing Model Algorithm",
@@ -228,6 +242,50 @@ def riskFreeInterestYield():
     except Exception as e:
         st.error(f"Unable To Retrieve Risk-Free Rate!")
         return 0.05
+    
+def Δ(optionType, S, K, T, r, σ):
+    if σ <= 0 or T <= 0:
+        return 0.0
+    d1 = (math.log(S/K) + (r+0.5*σ**2)*T)/(σ*(math.sqrt(T)))
+    if optionType == "call":
+        return norm.cdf(d1)
+    else:
+        return (norm.cdf(d1) - 1)
+    
+def Γ(S, K, T, r, σ):
+    if σ <= 0 or T <= 0:
+        return 0.0
+    d1 = (math.log(S/K) + (r*0.5+σ**2)*T)/(σ*(math.sqrt(T)))
+    return ((norm.pdf(d1))/(S*σ*math.sqrt(T)))
+
+def ν(S, K, T, r, σ):
+    if σ <= 0 or T <= 0:
+        return 0.0
+    d1 = (math.log(S/K) + (r+0.5*σ**2)*T)/(σ*math.sqrt(T))
+    return (norm.pdf(d1))/(S*σ*math.sqrt(T))
+
+def Θ(optionType, S, K, T, r, σ):
+    if σ <= 0 or T <= 0:
+        return 0.0
+    d1 = (math.log(S/K) + (r+0.5*σ**2)*T)/(σ*math.sqrt(T))
+    d2 = d1 - σ*math.sqrt(T)
+    firstTerm = -(S*norm.pdf(d1)*σ) / (2*math.sqrt(T))
+    if optionType == "call":
+        secondTerm = r*K*math.exp(-r*T)*norm.cdf(d2)
+        return (firstTerm - secondTerm)
+    else:
+        secondTerm = r*K*math.exp(-r*T)*norm.cdf(-d2)
+        return (firstTerm + secondTerm)
+
+def ρ(optionType, S, K, T, r, σ):
+    if σ <= 0 or T <= 0:
+        return 0.0
+    d1 = (math.log(S/K) + (r+0.5*σ**2)*T)/(σ*math.sqrt(T))
+    d2 = d1 - σ*math.sqrt(T)
+    if optionType == "call":
+        return (K*T*math.exp(-r*T)*norm.cdf(d2))
+    else:
+        return (-K*T*math.exp(-r*T)*norm.cdf(-d2))
 
 def StreamlitInterface():
     plt.style.use('dark_background')
@@ -277,6 +335,13 @@ def StreamlitInterface():
         visualiseOptionStrike(S, K, T, r, σ, optionType)
         visualiseOptionMaturity(S, K, r, σ, optionType)
         visualiseOptionVolatility(S, K, T, r, σ, optionType)
+
+    st.subheader("Option Greeks")
+    greeksOptionType = st.selectbox("Select Option Type For Greeks: ", ["call", "put"])
+    greeksOptionData = {"Option Greeks": ["Delta(Δ)", "Gamma(Γ)", "Vega(ν)", "Theta(Θ)", "Rho(ρ)"],"Value": [Δ(greeksOptionType, S, K, T, r, σ),Γ(S, K, T, r, σ),ν(S, K, T, r, σ),Θ(greeksOptionType, S, K, T, r, σ),ρ(greeksOptionType, S, K, T, r, σ),]}
+    dfGreeks = pd.DataFrame(greeksOptionData)
+    dfGreeks["Value"] = dfGreeks["Value"].apply(lambda x: f"{x:.6f}")
+    st.table(dfGreeks)
 
     st.subheader("Stock Option Prices Heatmap")
     if st.button("Visualise Heatmap"):
