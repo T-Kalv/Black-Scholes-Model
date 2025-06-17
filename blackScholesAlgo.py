@@ -219,6 +219,16 @@ def previousVolatilities(stockTicker, period='1y'):
     volatility = np.std(stockData) * numberOfDays
     return volatility
 
+def riskFreeInterestYield():
+    try:
+        tnx = yf.Ticker("^TNX")
+        riskFreeData = tnx.history(period='1d')
+        tenYearYield = riskFreeData['Close'].iloc[-1]/100
+        return tenYearYield
+    except Exception as e:
+        st.error(f"Unable To Retrieve Risk-Free Rate!")
+        return 0.05
+
 def StreamlitInterface():
     plt.style.use('dark_background')
     stockTicker = st.text_input("Enter Stock Ticker Symbol: ", key='stockTicker')
@@ -226,6 +236,8 @@ def StreamlitInterface():
         st.session_state['currentS'] = 100.0
     if 'currentSigma' not in st.session_state:
         st.session_state['currentSigma'] = 0.2
+    if 'currentR' not in st.session_state:
+        st.session_state['currentR'] = riskFreeInterestYield()
     if st.button("Load Current Stock Market Data", key='loadData'):
         if stockTicker:
             try:
@@ -235,19 +247,20 @@ def StreamlitInterface():
                     st.session_state['currentS'] = stockPrevious['Close'].iloc[-1]
                     st.session_state['currentSigma'] = previousVolatilities(stockTicker)
                     st.success(f"Current Market Price: {st.session_state['currentS']:.2f}")
+                    st.success(f"Risk-free Interest Rate (10Y Yield): {st.session_state['currentR']*100:.2f}%")
                     st.success(f"Previous Volatility Estimation: {st.session_state['currentSigma']:.4f}")
                 else:
                     st.error("No Market Data Found!")
             except Exception as e:
                 st.error(f"Error Loading Data: {e}")
         else:
-            st.error("Please enter a Stock Ticker first.")
+            st.error("Enter Stock Ticker!")
     
     S = st.number_input("Enter Current Stock Price (S): ", min_value=0.01, value=st.session_state['currentS'], key='currentS')
     σ = st.number_input("Enter Volatility (σ): ", min_value=0.001, value=st.session_state['currentSigma'], key='currentSigma')
     K = st.number_input("Enter Strike Price (K): ", min_value=0.01, value=S, key='currentK')
     T = st.number_input("Enter Time To Maturity (yrs): ", min_value=0.001, value=0.5, key='currentT')
-    r = st.number_input("Enter Risk-free Interest-Rate (r): ", min_value=0.0, value=0.01, format="%.4f", key='currentR')
+    r = st.number_input("Enter Risk-free Interest-Rate (r): ", min_value=0.0, value=st.session_state['currentR'], format="%.6f", key='currentR')
 
     callPrice = europeanCallOption(S, K, T, r, σ)
     putPrice = europeanPutOption(S, K, T, r, σ)
