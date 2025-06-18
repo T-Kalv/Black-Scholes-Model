@@ -62,6 +62,8 @@ import yfinance as yf
 import numpy as np
 import plotly.graph_objs as go
 import pandas as pd
+import sqlite3
+from datetime import datetime
 
 st.set_page_config(
     page_title="Black-Scholes Option Pricing Model Algorithm",
@@ -70,6 +72,27 @@ st.set_page_config(
 )
 st.title("Black-Scholes Option Pricing Model Algorithm 📈")
 st.caption("*Using Yahoo Finance Stock Market Data API")
+
+def initialiseDB():
+    connection = sqlite3.connect("stockOptions.db")
+    c = connection.cursor()
+    c.execute(
+        """
+        CREATE TABLE IF NOT EXISTS queriedOptions (
+            ID INTEGER PRIMARY KEY AUTOINCREMENT,
+            [timestamp] TEXT,
+            stockTicker TEXT,
+            OptionType TEXT,
+            S REAL,
+            K REAL,
+            T REAL,
+            r REAL,
+            σ, REAL,
+            optionPrice REAL
+        )
+        """)
+    connection.commit()
+    connection.close()
 
 def europeanCallOption(S, K, T, r, σ):
     if T <= 0:
@@ -286,8 +309,9 @@ def ρ(optionType, S, K, T, r, σ):
         return (K*T*math.exp(-r*T)*norm.cdf(d2))
     else:
         return (-K*T*math.exp(-r*T)*norm.cdf(-d2))
-
+    
 def StreamlitInterface():
+    initialiseDB()
     plt.style.use('dark_background')
     stockTicker = st.text_input("Enter Stock Ticker Symbol: ", key='stockTicker')
     if 'currentS' not in st.session_state:
@@ -330,6 +354,24 @@ def StreamlitInterface():
         putPrice = europeanPutOption(st.session_state['currentS'], K, T, r, σ)
         st.success(f"Call Option Price: {callPrice:.4f}")
         st.success(f"Put Option Price: {putPrice:.4f}")
+        timeStamp = datetime.now().isoformat()
+        S = st.session_state['currentS']
+        connection = sqlite3.connect("stockOptions.db")
+        c = connection.cursor()
+        c.execute(
+            """
+            INSERT INTO queriedOptions (timeStamp, stockTicker, optionType, S, K, T, r, σ, optionPrice)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+        (timeStamp, stockTicker, "call", S, K, T, r, σ, callPrice))
+        c.execute(
+            """
+            INSERT INTO queriedOptions (timeStamp, stockTicker, optionType, S, K, T, r, σ, optionPrice)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+        (timeStamp, stockTicker, "put", S, K, T, r, σ, putPrice))
+        connection.commit()
+        connection.close()
         optionType = st.selectbox("Option Type", ["call", "put"], key="optionTypevisualise")
         visualiseOptionStock(S, K, T, r, σ, optionType)
         visualiseOptionStrike(S, K, T, r, σ, optionType)
@@ -364,6 +406,13 @@ def StreamlitInterface():
             st.success(f"Estimated Implied Volatility: {result:.6f}")
         else:
             st.error("No Convergence On Implied Volatility!")
+
+    if st.button("Export Queries"):
+        connection = sqlite3.connect("stockOptions.db")
+        df = pd.read_sql_query("SELECT * FROM queriedOptions", connection)
+        connection.close()
+        csvFile = df.to_csv(index=False).encode('utf-8')
+        st.download_button("Download Queries As CSV Format", data=csvFile, file_name="queriedOptions.csv", mime='text/csv') 
 
 if __name__ == "__main__":
     #Main()
