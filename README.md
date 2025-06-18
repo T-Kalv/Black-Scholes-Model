@@ -45,6 +45,7 @@ Newton Raphson (Implied Volatility):
 - Visualise Option Prices using matplotlib such as option price vs stock price, option price vs strike price, option price vs volatility, option price vs time to maturity
 - Implement simple Steamlit app that shows these results
 - Add real time market data integration using Yahoo Finance API to retrieve real-world stock data 
+- Add a SQL database backend to store and export user stock option queries
 ![image](https://github.com/user-attachments/assets/73aded7a-ba87-4cd7-8edc-9c3499a6425a)
 ![image](https://github.com/user-attachments/assets/ce9aab0f-b049-4449-9b6b-4f9d692dca9d)
 ![image](https://github.com/user-attachments/assets/444c0a2f-5a10-4e62-aaed-e04f3512d56e)

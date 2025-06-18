@@ -49,6 +49,7 @@ Tasks:
 - Implement simple Steamlit app that shows these results
 - Add real time market data integration using Yahoo Finance to retrieve real-world stock data 
 - Add stock option prices heatmap visualisation
+- Add a SQL database backend to store and export user stock option queries
 """
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
