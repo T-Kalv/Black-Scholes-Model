@@ -378,6 +378,13 @@ def StreamlitInterface():
         visualiseOptionMaturity(S, K, r, σ, optionType)
         visualiseOptionVolatility(S, K, T, r, σ, optionType)
 
+    if st.button("Export Queries"):
+        connection = sqlite3.connect("stockOptions.db")
+        df = pd.read_sql_query("SELECT * FROM queriedOptions", connection)
+        connection.close()
+        csvFile = df.to_csv(index=False).encode('utf-8')
+        st.download_button("Download Queries As CSV Format", data=csvFile, file_name="queriedOptions.csv", mime='text/csv') 
+
     st.subheader("Option Greeks")
     greeksOptionType = st.selectbox("Select Option Type For Greeks: ", ["call", "put"])
     greeksOptionData = {"Option Greeks": ["Delta(Δ)", "Gamma(Γ)", "Vega(ν)", "Theta(Θ)", "Rho(ρ)"],"Value": [Δ(greeksOptionType, S, K, T, r, σ),Γ(S, K, T, r, σ),ν(S, K, T, r, σ),Θ(greeksOptionType, S, K, T, r, σ),ρ(greeksOptionType, S, K, T, r, σ),]}
@@ -406,13 +413,6 @@ def StreamlitInterface():
             st.success(f"Estimated Implied Volatility: {result:.6f}")
         else:
             st.error("No Convergence On Implied Volatility!")
-
-    if st.button("Export Queries"):
-        connection = sqlite3.connect("stockOptions.db")
-        df = pd.read_sql_query("SELECT * FROM queriedOptions", connection)
-        connection.close()
-        csvFile = df.to_csv(index=False).encode('utf-8')
-        st.download_button("Download Queries As CSV Format", data=csvFile, file_name="queriedOptions.csv", mime='text/csv') 
 
 if __name__ == "__main__":
     #Main()
