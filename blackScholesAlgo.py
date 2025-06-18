@@ -26,7 +26,7 @@ N(d) = cumulative distribution function of the standard normal distribution whic
 Newton Raphson (Implied Volatility):
 f(σ) = BlackScholes(σ) - MarketPrice = 0
 σnew = σ - (f(σ)/f'(σ)) = σ - (BlackScholes(σ) - MarketPrice/Vega(σ))
-- Vega(σ) = rate of change of BlackScholes option price wrt chaanges in volatility σ
+- Vega(σ) = rate of change of BlackScholes option price wrt changes in volatility σ
 
 Option Greeks:
 - Delta(Δ) = measures price sensitiviy to underlying, call option => Δ ranges from 0 to 1, put option => Δ ranges from -1 to 0

@@ -19,23 +19,48 @@
 - provides theoretical estimate of the price of Europoean call/put option
 
 ### Formula:
-- S = current price of stock
-- K = strike price of the option
-- T = time to maturity in years
-- r = risk-free interest rate
-- σ = volatility of stock which is the standard deviation of returns
+- $ S $ = current price of stock
+- $ K $ = strike price of the option
+- $ T $ = time to maturity in years
+- $ r $ = risk-free interest rate
+- $ \sigma $ = volatility of stock (the standard deviation of returns)
 
-C = S*N(d1) - (Ke^(-rT)) * N(d2) which is the European Call Option
-P = (Ke^(-rT)) * N(-d2) - S*N(-d1) which is the European Put Option
+### European Call Option:
+$$C = S \cdot N(d_1) - K e^{-rT} \cdot N(d_2)$$
 
-- d1 = (ln(S/K) + (r+(σ^2)/2)T)/(σ*sqrt(T))
-- d2 = d1 - σ*sqrt(T)
-- N(d) = cumulative distribution function of the standard normal distribution which gives the probability that a normally distributed random varaible is < d
+### European Put Option:
+$$P = K e^{-rT} \cdot N(-d_2) - S \cdot N(-d_1)$$
 
-Newton Raphson (Implied Volatility):
-- f(σ) = BlackScholes(σ) - MarketPrice = 0
-- σnew = σ - (f(σ)/f'(σ)) = σ - (BlackScholes(σ) - MarketPrice/Vega(σ))
-- Vega(σ) = rate of change of BlackScholes option price wrt chaanges in volatility σ
+Where:
+$$d_1 = \frac{\ln(S/K) + \left(r + \frac{\sigma^2}{2}\right) T}{\sigma \sqrt{T}}$$
+$$d_2 = d_1 - \sigma \sqrt{T}$$
+$$N(d) = \text{cumulative distribution function of the standard normal distribution}$$
+
+### Newton Raphson (Implied Volatility):
+- $ f(\sigma) = \text{BlackScholes}(\sigma) - \text{MarketPrice} = 0 $
+- $$\sigma_{\text{new}} = \sigma - \frac{f(\sigma)}{f'(\sigma)} = \sigma - \frac{\text{BlackScholes}(\sigma) - \text{MarketPrice}}{\text{Vega}(\sigma)}$$
+- $ \text{Vega}(\sigma) = \text{rate of change of BlackScholes option price wrt changes in volatility } \sigma $
+
+### Option Greeks:
+- Delta ($ \Delta $) = measures price sensitivity to underlying:
+  - Call option: $ \Delta $ ranges from 0 to 1
+  - Put option: $ \Delta $ ranges from -1 to 0
+- Gamma ($ \Gamma $) = measures rate of change of delta
+- Vega ($ \nu $) = measures sensitivity to volatility
+- Theta ($ \Theta $) = measures sensitivity to time decay
+- Rho ($ \rho $) = measures sensitivity to interest rates
+
+### Formula for Option Greeks:
+- For Calls: 
+  $$\Delta = N(d_1)$$
+- For Puts: 
+  $$\Delta = N(d_1) - 1$$
+- where $ N() $ is the standard normal cumulative distribution function
+- 
+- $$\Gamma = \frac{N'(d_1)}{S \sigma \sqrt{T}}$$
+- where $ N'(d_1) $ is the standard normal probability density function
+- 
+- $$\nu = S \sqrt{T} N'(d_1)$$
 
 
 ## Tasks:
