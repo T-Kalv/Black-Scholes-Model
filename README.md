@@ -16,7 +16,7 @@
 ## About:
 
 ### Basic Black-Scholes Algorithm
-- provides theoretical estimate of the price of Europoean call/put option
+- provides theoretical estimate of the price of European call/put option
 
 ### Formula:
 - $ S $ = current price of stock
